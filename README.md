@@ -5,4 +5,4 @@
 
 ズームイン・アウト機能
 
-https://tositeru.github.io/walking_map/. 
+http://test.map/. 
