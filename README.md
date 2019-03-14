@@ -4,3 +4,5 @@
 地図を動かさない機能
 
 ズームイン・アウト機能
+
+https://tositeru.github.io/walking_map/. 
