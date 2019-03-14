@@ -1,9 +1,12 @@
+import Feature from 'ol/Feature.js';
+import Point from 'ol/geom/Point.js';
 import Map from 'ol/Map.js';
 import View from 'ol/View.js';
 import {Draw, Modify, Snap} from 'ol/interaction.js';
 import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer.js';
 import {OSM, Vector as VectorSource} from 'ol/source.js';
 import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style.js';
+import Geolocation from 'ol/Geolocation.js';
 
 var raster = new TileLayer({
   source: new OSM()
@@ -29,13 +32,17 @@ var vector = new VectorLayer({
   })
 });
 
+const view = new View({
+  center: [-11000000, 4600000],
+  zoom: 17,
+  minZoom: 3,
+  maxZoom: 28    
+})
+
 var map = new Map({
   layers: [raster, vector],
   target: 'map',
-  view: new View({
-    center: [-11000000, 4600000],
-    zoom: 4
-  })
+  view: view
 });
 
 var modify = new Modify({source: source});
@@ -64,4 +71,49 @@ typeSelect.onchange = function() {
 };
 
 addInteractions();
+
+var positionFeature = new Feature();
+positionFeature.setStyle(new Style({
+  image: new CircleStyle({
+    radius: 6,
+    fill: new Fill({
+      color: '#33CC99'
+    }),
+    stroke: new Stroke({
+      color: '#fff',
+      width: 2
+    })
+  })
+}));
+
+var geolocation = new Geolocation({
+  trackingOptions: {
+    enableHighAccuracy: true
+  },
+  projection: view.getProjection()
+});
+geolocation.setTracking(true); // here the browser may ask for confirmation
+geolocation.on('change:position', function() {
+  const coordinates = geolocation.getPosition();
+  positionFeature.setGeometry(coordinates ?
+    new Point(coordinates) : null);
+  
+  view.animate({
+    center: coordinates,
+    duration: 1000,
+  })
+  console.log(geolocation.getPosition(), new Point(coordinates));
+});
+
+var accuracyFeature = new Feature();
+geolocation.on('change:accuracyGeometry', function() {
+  accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
+});
+
+new VectorLayer({
+  map: map,
+  source: new VectorSource({
+    features: [accuracyFeature, positionFeature]
+  })
+});
 
