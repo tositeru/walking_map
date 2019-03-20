@@ -5,13 +5,26 @@
   "author": "tositeru <tositeru104@protonmail.com>",
   "license": "NOT",
   "private": true,
+  "scripts": {
+    "dev": "cross-env NODE_ENV=dev webpack-dev-server --open",
+    "lint": "eslint --fix src/**/*.js"
+  },
   "dependencies": {
     "lodash": "^4.17.11",
     "ol": "^5.3.1"
   },
   "devDependencies": {
-    "clean-webpack-plugin": "^2.0.0",
+    "@types/lodash": "^4.14.123",
+    "@types/openlayers": "^4.6.16",
+    "clean-webpack-plugin": "^2.0.1",
+    "cross-env": "^5.2.0",
+    "eslint": "^5.15.3",
+    "eslint-config-google": "^0.12.0",
+    "html-webpack-plugin": "^3.2.0",
+    "pug": "^2.0.3",
+    "pug-loader": "^2.4.0",
     "webpack": "^4.29.6",
-    "webpack-cli": "^3.2.3"
+    "webpack-cli": "^3.2.3",
+    "webpack-dev-server": "^3.2.1"
   }
 }

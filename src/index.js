@@ -1,70 +1,75 @@
 import Feature from 'ol/Feature.js';
+import Geolocation from 'ol/Geolocation.js';
 import Point from 'ol/geom/Point.js';
-import Map from 'ol/Map.js';
-import View from 'ol/View.js';
 import {Draw, Modify, Snap} from 'ol/interaction.js';
 import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer.js';
+import Map from 'ol/Map.js';
 import {OSM, Vector as VectorSource} from 'ol/source.js';
 import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style.js';
-import Geolocation from 'ol/Geolocation.js';
+import View from 'ol/View.js';
 
-var raster = new TileLayer({
-  source: new OSM()
+
+const raster = new TileLayer({
+  source: new OSM(),
 });
 
-var source = new VectorSource();
-var vector = new VectorLayer({
-  source: source,
+const source = new VectorSource();
+const vector = new VectorLayer({
+  source,
   style: new Style({
     fill: new Fill({
-      color: 'rgba(255, 255, 255, 0.2)'
+      color: 'rgba(255, 255, 255, 0.2)',
+    }),
+    image: new CircleStyle({
+      fill: new Fill({
+        color: '#ffcc33',
+      }),
+      radius: 7,
     }),
     stroke: new Stroke({
       color: '#ffcc33',
-      width: 2
+      width: 2,
     }),
-    image: new CircleStyle({
-      radius: 7,
-      fill: new Fill({
-        color: '#ffcc33'
-      })
-    })
-  })
+  }),
 });
 
 const view = new View({
   center: [-11000000, 4600000],
-  zoom: 17,
+  maxZoom: 28,
   minZoom: 3,
-  maxZoom: 28    
-})
-
-var map = new Map({
-  layers: [raster, vector],
-  target: 'map',
-  view: view
+  zoom: 17,
 });
 
-var modify = new Modify({source: source});
+const map = new Map({
+  layers: [raster, vector],
+  target: 'map',
+  view,
+});
+
+const modify = new Modify({source});
 map.addInteraction(modify);
 
-var draw, snap; // global so we can remove them later
-var typeSelect = document.getElementById('type');
+let draw;
+let snap; // global so we can remove them later
+const typeSelect = document.getElementById('type');
 
+/**
+ *
+ */
 function addInteractions() {
   draw = new Draw({
-    source: source,
-    type: typeSelect.value
+    source,
+    type: typeSelect.value,
   });
   map.addInteraction(draw);
-  snap = new Snap({source: source});
+  snap = new Snap({source});
   map.addInteraction(snap);
 }
 
 /**
  * Handle change event.
  */
-typeSelect.onchange = function() {
+typeSelect.onchange = () => {
   map.removeInteraction(draw);
   map.removeInteraction(snap);
   addInteractions();
@@ -72,48 +77,47 @@ typeSelect.onchange = function() {
 
 addInteractions();
 
-var positionFeature = new Feature();
+const positionFeature = new Feature();
 positionFeature.setStyle(new Style({
   image: new CircleStyle({
-    radius: 6,
     fill: new Fill({
-      color: '#33CC99'
+      color: '#33CC99',
     }),
+    radius: 6,
     stroke: new Stroke({
       color: '#fff',
-      width: 2
-    })
-  })
+      width: 2,
+    }),
+  }),
 }));
 
-var geolocation = new Geolocation({
+const geolocation = new Geolocation({
+  projection: view.getProjection(),
   trackingOptions: {
-    enableHighAccuracy: true
+    enableHighAccuracy: true,
   },
-  projection: view.getProjection()
 });
 geolocation.setTracking(true); // here the browser may ask for confirmation
-geolocation.on('change:position', function() {
+geolocation.on('change:position', () => {
   const coordinates = geolocation.getPosition();
   positionFeature.setGeometry(coordinates ?
     new Point(coordinates) : null);
-  
+
   view.animate({
     center: coordinates,
     duration: 1000,
-  })
-  console.log(geolocation.getPosition(), new Point(coordinates));
+  });
+  // console.log(geolocation.getPosition(), new Point(coordinates));
 });
 
-var accuracyFeature = new Feature();
-geolocation.on('change:accuracyGeometry', function() {
+const accuracyFeature = new Feature();
+geolocation.on('change:accuracyGeometry', () => {
   accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
 });
 
 new VectorLayer({
-  map: map,
+  map,
   source: new VectorSource({
-    features: [accuracyFeature, positionFeature]
-  })
+    features: [accuracyFeature, positionFeature],
+  }),
 });
-
