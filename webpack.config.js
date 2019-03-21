@@ -9,11 +9,11 @@ module.exports = {
 	},
 	output: {
 		filename: '[name].js',
-		path: path.resolve(__dirname, 'docs')
+		path: path.resolve(__dirname, 'dist')
 	},
 	devtool: 'inline-source-map',
 	devServer: {
-		contentBase: path.join(__dirname, 'docs')
+		contentBase: path.join(__dirname, 'dist')
 	},
 	module: {
 		rules: [

@@ -6,6 +6,7 @@
   "license": "NOT",
   "private": true,
   "scripts": {
+    "build": "webpack",
     "dev": "cross-env NODE_ENV=dev webpack-dev-server --open",
     "lint": "eslint --fix src/**/*.js"
   },
@@ -14,8 +15,11 @@
     "ol": "^5.3.1"
   },
   "devDependencies": {
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@types/lodash": "^4.14.123",
     "@types/openlayers": "^4.6.16",
+    "babel": "^6.23.0",
+    "babel-eslint": "^10.0.1",
     "clean-webpack-plugin": "^2.0.1",
     "cross-env": "^5.2.0",
     "eslint": "^5.15.3",

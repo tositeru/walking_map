@@ -1,0 +1,16 @@
+language: node_js
+
+cache:
+  yarn: true
+
+script:
+  yarn lint && yarn webpack
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  local-dir: ./dist
+  keep-history: false
+  on:
+    branch: master
