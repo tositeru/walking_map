@@ -1,6 +1,8 @@
 
 動作確認的なプロジェクトなので細かいことは気にしない。
 
+[![Build Status](https://travis-ci.org/tositeru/Notebook.svg?branch=master)](https://travis-ci.org/tositeru/Notebook)
+
 
 地図にマーカーを表示する機能 （線でもOK）
 現在位置を取得する機能
